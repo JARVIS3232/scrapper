@@ -1,21 +1,20 @@
-ARG PORT=443
 FROM cypress/browsers:latest
 
-# Install python3, python3-pip, and python3-venv
-RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+# Install python3, pip, and required dependencies for Chrome to run in headless mode
+RUN apt-get update && apt-get install -y \
+    python3 python3-pip \
+    libx11-xcb1 libfontconfig1 libgbm1 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create a virtual environment in /venv
+# Create virtual environment and install dependencies
 RUN python3 -m venv /venv
-
-# Set the virtual environment as the active environment for the subsequent commands
 ENV PATH="/venv/bin:$PATH"
 
-# Copy the requirements.txt file and install dependencies inside the virtual environment
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy the rest of your application files
+# Copy the rest of your files
 COPY . .
 
-# Run the Flask app using Gunicorn on the specified port
+# Run the Flask app using Gunicorn
 CMD gunicorn -b 0.0.0.0:$PORT main:app
