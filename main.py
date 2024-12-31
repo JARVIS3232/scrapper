@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request,render_template
 from flask_cors import CORS
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
@@ -107,9 +108,13 @@ def run_script():
     options.add_argument("--disable-gpu")  
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--start-maximized")
+    options.binary_location = "/usr/bin/chromium"
+    service = Service("/usr/bin/chromedriver") 
  
     # options.add_argument('--proxy-server=%s' % PROXY)
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=service,options=options)
+    driver.set_page_load_timeout(30)
+    driver.set_script_timeout(30)
     # driver.maximize_window()
     try:
         login_to_twitter(driver)
