@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trending Topics</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      #run-script,
+      #run-again {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .trends-list {
+        margin-top: 20px;
+      }
+      .trends-list li {
+        margin-bottom: 8px;
+      }
+      .json-output {
+        background: #f4f4f4;
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-top: 20px;
+      }
+      a {
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Trending Topics</h1>
+    <button id="run-script">Click here to run the script</button>
+    <div id="output" class="trends-list"></div>
+
+    <script>
+      document
+        .getElementById("run-script")
+        .addEventListener("click", fetchTrends);
+      async function fetchTrends() {
+        const output = document.getElementById("output");
+        output.innerHTML = "Running script... Please wait.";
+        try {
+          const response = await fetch(
+            "https://scrapper-gamma.vercel.app/run-script",
+            {
+              method: "POST",
+            }
+          );
+          const data = await response.json();
+
+          if (response.ok) {
+            const { trends, timestamp, ip_address, unique_id } = data;
+
+            const trendsList = trends
+              .map((trend, index) => `<li>Trend ${index + 1}: ${trend}</li>`)
+              .join("");
+            const jsonExtract = `<pre class="json-output">${JSON.stringify(
+              data,
+              null,
+              2
+            )}</pre>`;
+
+            output.innerHTML = `
+            <p>These are the most happening topics as on ${timestamp}:</p>
+            <ul>${trendsList}</ul>
+            <p>The IP address used for this query was ${ip_address}.</p>
+            <p>Here’s a JSON extract of this record from the MongoDB:</p>
+            ${jsonExtract}
+             <button id="run-again" class="secondary">
+              Click here to run query again!
+             </button>
+          `;
+            document
+              .getElementById("run-again")
+              .addEventListener("click", fetchTrends);
+          } else {
+            output.innerHTML = `<p>Error: ${data.message} Please try again</p>`;
+          }
+        } catch (error) {
+          output.innerHTML = `<p>Failed to run the script. Please try again later.</p>`;
+          console.error(error);
+        }
+      }
+    </script>
+  </body>
+</html>
