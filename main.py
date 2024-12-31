@@ -104,7 +104,6 @@ def run_script():
         options.add_argument('--headless')  
         # options.add_argument('--proxy-server=%s' % PROXY)
         driver = webdriver.Chrome(options=options)
-        driver.maximize_window()
         login_to_twitter(driver)
         trends = scrape_whats_happening(driver)
         if not trends:
