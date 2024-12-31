@@ -1,3 +1,4 @@
+import traceback
 from flask import Flask, jsonify, request,render_template
 from flask_cors import CORS
 from bs4 import BeautifulSoup
@@ -101,9 +102,11 @@ def run_script():
     try:
         PROXY="45.32.86.6:31280"
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')  
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')   
         # options.add_argument('--proxy-server=%s' % PROXY)
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome(options=options,executable_path='/usr/local/bin/chromedriver')
         login_to_twitter(driver)
         trends = scrape_whats_happening(driver)
         if not trends:
@@ -118,7 +121,8 @@ def run_script():
         data["_id"] = str(data.get("_id"))
         return jsonify(data), 200
     except Exception as e:
-        return jsonify({"message": "Unknown error occured !"}), 500
+         print("Error Traceback:", traceback.format_exc())
+         return jsonify({"message": str(e)}), 500
     finally:
         driver.quit()
 
