@@ -99,14 +99,14 @@ def save_to_mongodb(data):
 
 @app.route('/run-script', methods=['POST'])
 def run_script():
+    PROXY="45.32.86.6:31280"
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')   
+    # options.add_argument('--proxy-server=%s' % PROXY)
+    driver = webdriver.Chrome(options=options)
     try:
-        PROXY="45.32.86.6:31280"
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')   
-        # options.add_argument('--proxy-server=%s' % PROXY)
-        driver = webdriver.Chrome(options=options,executable_path='/usr/local/bin/chromedriver')
         login_to_twitter(driver)
         trends = scrape_whats_happening(driver)
         if not trends:
