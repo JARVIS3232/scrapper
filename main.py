@@ -68,7 +68,7 @@ def scrape_whats_happening(driver):
         driver.get("https://x.com/home")
         time.sleep(6)
         whats_section = driver.find_element(By.XPATH, 
-            '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div[2]/div/div[2]/div/div/div/div[4]/section/div/div')
+            '/html/body/div[1]/div/div/div[2]/main/div/div/div/div[2]/div/div[2]/div/div/div/div[4]')
         html_content = whats_section.get_attribute("outerHTML")
         soup = BeautifulSoup(html_content, "html.parser")
         span_elements = soup.find_all("span")
@@ -103,9 +103,14 @@ def run_script():
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')   
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument("--disable-gpu")  
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--start-maximized")
+ 
     # options.add_argument('--proxy-server=%s' % PROXY)
     driver = webdriver.Chrome(options=options)
+    # driver.maximize_window()
     try:
         login_to_twitter(driver)
         trends = scrape_whats_happening(driver)
