@@ -12,7 +12,6 @@ from pymongo import MongoClient
 from datetime import datetime
 import socket
 
-
 USERNAME = "TestScrap37394"
 EMAIL= "yehogod688@gholar.com" # Sometimes Twitter ask for email as well 
 PASSWORD = "Test@123"
@@ -102,20 +101,17 @@ def save_to_mongodb(data):
 def run_script():
     PROXY="45.32.86.6:31280"
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument("--disable-gpu")  
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--start-maximized")
-    options.binary_location = "/usr/bin/chromium"
-    service = Service("/usr/bin/chromedriver") 
- 
+    # options.add_argument('--headless')
+    # options.add_argument('--no-sandbox')    
+    # options.add_argument('--disable-dev-shm-usage')
+    # options.add_argument("--disable-gpu")  
+    # options.add_argument("--window-size=1920,1080")
+    # options.add_argument("--start-maximized")
+    # options.binary_location = "/usr/bin/chromium"
+    # service = Service("/usr/local/bin/chromedriver") 
     # options.add_argument('--proxy-server=%s' % PROXY)
-    driver = webdriver.Chrome(service=service,options=options)
-    driver.set_page_load_timeout(30)
-    driver.set_script_timeout(30)
-    # driver.maximize_window()
+    driver = webdriver.Chrome(options=options)
+    driver.maximize_window()
     try:
         login_to_twitter(driver)
         trends = scrape_whats_happening(driver)
